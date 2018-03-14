@@ -1,6 +1,6 @@
 ## Image::QRCode
 
-Image::QRCode - OO interface to libqrencode.
+Image::QRCode - An interface to libqrencode.
 
 ## Build Status
 

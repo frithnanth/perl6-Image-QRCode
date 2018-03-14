@@ -17,14 +17,14 @@ constant MQRSPEC_VERSION_MAX is export(:constants) = 4;
 class QRinput is repr('CPointer') is export { * } # libqrencode private struct
 class QRinput_Struct is repr('CPointer') is export { * } # libqrencode private struct
 
-class Image::QRCode::QRcode is repr('CStruct') is export {
+class QRcode is repr('CStruct') is export {
   has int32 $.version;
   has int32 $.width;
   has CArray[uint8] $.data;
 }
-class Image::QRCode::QRcode_List is repr('CStruct') is export {
-  has Image::QRCode::QRcode $.code;
-  has Image::QRCode::QRcode_List $.next;
+class QRcode_List is repr('CStruct') is export {
+  has QRcode $.code;
+  has QRcode_List $.next;
 }
 
 sub QRinput_new(--> QRinput) is native(LIB) is export { * }
@@ -48,15 +48,15 @@ sub QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct $s --> int32) is
 sub QRinput_setFNC1First(QRinput_Struct $s --> int32) is native(LIB) is export { * }
 sub QRinput_setFNC1Second(QRinput_Struct $s, Str $appid --> int32) is native(LIB) is export { * }
 sub QRcode_encodeInput(QRinput $input --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeString(Str $string, int32 $version, int32 $level, int32 $hint, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
+sub QRcode_encodeString(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeString8bit(Str $string, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeStringMQR(Str $string, int32 $version, int32 $level, int32 $hint, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
+sub QRcode_encodeStringMQR(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeString8bitMQR(Str $string, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeData(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeDataMQR(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
 sub QRcode_free(QRcode $qrcode) is native(LIB) is export { * }
 sub QRcode_encodeInputStructured(QRinput_Struct $s --> QRcode_List) is native(LIB) is export { * }
-sub QRcode_encodeStringStructured(Str $string, int32 $version, int32 $level, int32 $hint, int32 $casesensitive --> QRcode_List) is native(LIB) is export { * }
+sub QRcode_encodeStringStructured(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode_List) is native(LIB) is export { * }
 sub QRcode_encodeString8bitStructured(Str $string, int32 $version, int32 $level --> QRcode_List) is native(LIB) is export { * }
 sub QRcode_encodeDataStructured(int32 $size, Str $data, int32 $version, int32 $level --> QRcode_List) is native(LIB) is export { * }
 sub QRcode_List_size(QRcode_List $qrlist --> int32) is native(LIB) is export { * }
@@ -64,3 +64,51 @@ sub QRcode_List_free(QRcode_List $qrlist --> int32) is native(LIB) is export { *
 sub QRcode_APIVersion(int32 $major_version is rw, int32 $minor_version is rw, int32 $micro_version is rw) is native(LIB) is export { * }
 sub QRcode_APIVersionString(--> Str) is native(LIB) is export { * }
 sub QRcode_clearCache() is native(LIB) is export { * }
+
+=begin pod
+
+=head1 NAME
+
+Image::QRCode - An interface to libqrencode.
+
+=head1 SYNOPSIS
+=begin code
+
+=end code
+
+=head1 DESCRIPTION
+
+=head1 Prerequisites
+
+This module requires the libqrencode3 library to be installed. Please follow the
+instructions below based on your platform:
+
+=head2 Debian Linux
+
+=begin code
+sudo apt-get install libqrencode3
+=end code
+
+=head1 Installation
+
+=begin code
+$ zef install Image::QRCode
+=end code
+
+=head1 Testing
+
+To run the tests:
+
+=begin code
+$ prove -e "perl6 -Ilib"
+=end code
+
+=head1 Author
+
+Fernando Santagata
+
+=head1 License
+
+The Artistic License 2.0
+
+=end pod
