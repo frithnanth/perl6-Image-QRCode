@@ -43,10 +43,10 @@ sub QRinput_Struct_new(--> QRinput_Struct) is native(LIB) is export { * }
 sub QRinput_Struct_setParity(QRinput_Struct $s, uint8 $parity) is native(LIB) is export { * }
 sub QRinput_Struct_appendInput(QRinput_Struct $s, QRinput $input --> int32) is native(LIB) is export { * }
 sub QRinput_Struct_free(QRinput_Struct $s) is native(LIB) is export { * }
-sub QRinput_splitQRinputToStructQRinput(QRinput $input --> QRinput_Struct) is native(LIB) is export { * }
+sub QRinput_splitQRinputToStruct(QRinput $input --> QRinput_Struct) is native(LIB) is export { * }
 sub QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct $s --> int32) is native(LIB) is export { * }
-sub QRinput_setFNC1First(QRinput_Struct $s --> int32) is native(LIB) is export { * }
-sub QRinput_setFNC1Second(QRinput_Struct $s, Str $appid --> int32) is native(LIB) is export { * }
+sub QRinput_setFNC1First(QRinput $s --> int32) is native(LIB) is export { * }
+sub QRinput_setFNC1Second(QRinput $s, uint8 $appid --> int32) is native(LIB) is export { * }
 sub QRcode_encodeInput(QRinput $input --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeString(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
 sub QRcode_encodeString8bit(Str $string, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
