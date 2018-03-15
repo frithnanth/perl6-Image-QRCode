@@ -41,13 +41,39 @@ my int32 $res = QRinput_check(QR_MODE_NUM, 3, 'a123');
 is $res, -1, 'check invalid data before appending';
 is QRinput_append($qrinput, QR_MODE_NUM, 3, '123'), 0, 'append data';
 is QRinput_appendECIheader($qrinput, 10000), 0, 'append ECI header';
-my QRinput_Struct $qrstruct = QRinput_Struct_new;
-is $qrstruct.WHAT, QRinput_Struct, 'QRinput_Struct_new';
+is QRinput_setFNC1First($qrinput), 0, 'QRinput_setFNC1First';
+is QRinput_setFNC1Second($qrinput, 1), 0, 'QRinput_setFNC1Second';
+my QRcode $qrcodeqrinput = QRcode_encodeInput($qrinput);
+my uint8 @dataqrinput := $qrcodeqrinput.data;
+is @dataqrinput[^$qrcodeqrinput.width] «+&» 1,
+  (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+  'qrcode from QRinput';
+my QRinput_Struct $qrstruct = QRinput_splitQRinputToStruct($qrinput);
+is $qrstruct.WHAT, QRinput_Struct, 'QRinput_splitQRinputToStruct';
 subtest {
+  my QRinput_Struct $qrstruct = QRinput_Struct_new;
+  is $qrstruct.WHAT, QRinput_Struct, 'QRinput_Struct_new';
   $res = QRinput_Struct_appendInput($qrstruct, $qrinput);
   ok $res == 1, 'append one object';
+  is QRinput_Struct_insertStructuredAppendHeaders($qrstruct), 0, 'QRinput_Struct_insertStructuredAppendHeaders';
   my QRcode_List $qrlist = QRcode_encodeInputStructured($qrstruct);
   is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeInputStructured';
+  is QRcode_List_size($qrlist), 1, 'list size';
+  my $entry = $qrlist;
+  while $entry {
+    my QRcode $qrcode = $entry.code;
+    $entry = $entry.next;
+    is $qrcode.version, 1, 'qrcode version';
+    is $qrcode.width, 21, 'qrcode width';
+    my uint8 @data := $qrcode.data;
+    is @data[^$qrcode.width] «+&» 1,
+      (1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+      'qrcode data';
+  }
+}, 'encode a QRinput_struct';
+subtest {
+  my QRcode_List $qrlist = QRcode_encodeStringStructured('123', 1, QR_ECLEVEL_L, QR_MODE_8, 0);
+  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeStringStructured';
   is QRcode_List_size($qrlist), 1, 'list size';
   my $entry = $qrlist;
   while $entry {
@@ -60,5 +86,37 @@ subtest {
       (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
       'qrcode data';
   }
-}, 'append input to a QRinput_struct';
+}, 'encode a string (structured)';
+subtest {
+  my QRcode_List $qrlist = QRcode_encodeString8bitStructured('123', 1, QR_ECLEVEL_L);
+  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeString8bitStructured';
+  is QRcode_List_size($qrlist), 1, 'list size';
+  my $entry = $qrlist;
+  while $entry {
+    my QRcode $qrcode = $entry.code;
+    $entry = $entry.next;
+    is $qrcode.version, 1, 'qrcode version';
+    is $qrcode.width, 21, 'qrcode width';
+    my uint8 @data := $qrcode.data;
+    is @data[^$qrcode.width] «+&» 1,
+      (1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+      'qrcode data';
+  }
+}, 'encode from 8-bit string (structured)';
+subtest {
+  my QRcode_List $qrlist = QRcode_encodeDataStructured(3, '123', 3, QR_ECLEVEL_L);
+  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeDataStructured';
+  is QRcode_List_size($qrlist), 1, 'list size';
+  my $entry = $qrlist;
+  while $entry {
+    my QRcode $qrcode = $entry.code;
+    $entry = $entry.next;
+    is $qrcode.version, 3, 'qrcode version';
+    is $qrcode.width, 29, 'qrcode width';
+    my uint8 @data := $qrcode.data;
+    is @data[^$qrcode.width] «+&» 1,
+      (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1),
+      'qrcode data';
+  }
+}, 'encode data (structured)';
 done-testing;
