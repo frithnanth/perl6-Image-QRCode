@@ -68,9 +68,13 @@ subtest {
     is $qrcode.version, 1, 'qrcode version';
     is $qrcode.width, 21, 'qrcode width';
     my uint8 @data := $qrcode.data;
-    is @data[^$qrcode.width] «+&» 1,
-      (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
-      'qrcode data';
+    if QRcode_APIVersionString() eq '3.4.4' {
+      is @data[^$qrcode.width] «+&» 1,
+        (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+        'qrcode data';
+    } else {
+      skip 'qrcode data', 1;
+    }
   }
 }, 'encode a QRinput_struct';
 subtest {
@@ -86,9 +90,13 @@ subtest {
     is $qrcode.version, 1, 'qrcode version';
     is $qrcode.width, 21, 'qrcode width';
     my uint8 @data := $qrcode.data;
-    is @data[^$qrcode.width] «+&» 1,
-      (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
-      'qrcode data';
+    if QRcode_APIVersionString() eq '3.4.4' {
+      is @data[^$qrcode.width] «+&» 1,
+        (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+        'qrcode data';
+    } else {
+      skip 'qrcode data', 1;
+    }
   }
 }, 'encode a string (structured)';
 subtest {
@@ -104,9 +112,13 @@ subtest {
     is $qrcode.version, 1, 'qrcode version';
     is $qrcode.width, 21, 'qrcode width';
     my uint8 @data := $qrcode.data;
-    is @data[^$qrcode.width] «+&» 1,
-      (1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1),
-      'qrcode data';
+    if QRcode_APIVersionString() eq '3.4.4' {
+      is @data[^$qrcode.width] «+&» 1,
+        (1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1),
+        'qrcode data';
+    } else {
+      skip 'qrcode data', 1;
+    }
   }
 }, 'encode from 8-bit string (structured)';
 subtest {
@@ -122,9 +134,13 @@ subtest {
     is $qrcode.version, 3, 'qrcode version';
     is $qrcode.width, 29, 'qrcode width';
     my uint8 @data := $qrcode.data;
-    is @data[^$qrcode.width] «+&» 1,
-      (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1),
-      'qrcode data';
+    if QRcode_APIVersionString() eq '3.4.4' {
+      is @data[^$qrcode.width] «+&» 1,
+        (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1),
+        'qrcode data';
+    } else {
+      skip 'qrcode data', 1;
+    }
   }
 }, 'encode data (structured)';
 done-testing;
