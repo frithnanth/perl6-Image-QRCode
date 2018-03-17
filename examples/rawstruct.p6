@@ -17,7 +17,7 @@ while $entry {
   $entry = $entry.next;
   my @data := $qrcode.data;
   my $w := $qrcode.width;
-  (@data[$_ * $w .. $_ * $w + $w - 1] «+&» 1)
+  (@data[$_ * $w .. $_ * $w + $w - 1] »+&» 1)
     .join
     .trans('1' => "\c[FULL BLOCK]", '0' => ' ')
     .subst(/(.)/, {"$0$0"}, :g)
