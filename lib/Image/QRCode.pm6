@@ -1,5 +1,5 @@
 use v6;
-unit module Image::QRCode:ver<0.0.1>;
+unit class Image::QRCode:ver<0.0.1>;
 
 use NativeCall;
 
@@ -64,6 +64,47 @@ sub QRcode_List_free(QRcode_List $qrlist --> int32) is native(LIB) is export { *
 sub QRcode_APIVersion(int32 $major_version is rw, int32 $minor_version is rw, int32 $micro_version is rw) is native(LIB) is export { * }
 sub QRcode_APIVersionString(--> Str) is native(LIB) is export { * }
 sub QRcode_clearCache() is native(LIB) is export { * }
+
+# OO interface
+
+has Int $.version       = 0;
+has Int $.level         = QR_ECLEVEL_L;
+has Int $.mode          = QR_MODE_8;
+has Int $.casesensitive = 1;
+has Int $.size          = 2;
+has QRcode $.qrcode;
+
+constant OK is export(:constants) = 1;
+
+method encode(Str $text!, Int :$version, Int :$level, Int :$mode, Int :$casesensitive)
+{
+  $!qrcode = QRcode_encodeString($text,
+    $version // $!version,
+    $level // $!level,
+    $mode // $!mode,
+    $casesensitive // $!casesensitive
+  );
+}
+
+method termplot(Int :$size)
+{
+  fail X::AdHoc.new: errno => 1, error => 'No data to plot' if ! $!qrcode.defined;
+  my $s     = $size // $!size;
+  my $w    := $!qrcode.width;
+  my @data := $!qrcode.data;
+  (@data[$_ * $w .. $_ * $w + $w - 1] »+&» 1)
+    .join
+    .trans('1' => "\c[FULL BLOCK]", '0' => ' ')
+    .subst(/(.)/, {$0 x $s}, :g)
+    .say
+      for ^$w;
+  return OK;
+}
+
+submethod DESTROY
+{
+  QRcode_free($!qrcode) if $!qrcode.defined;
+}
 
 =begin pod
 
