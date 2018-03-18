@@ -7,7 +7,7 @@ use Image::QRCode;
 use Image::QRCode :constants;
 
 my $qrinput = QRinput_new;
-QRinput_append($qrinput, QR_MODE_AN, @*ARGS[0].chars, @*ARGS[0]);
+QRinput_append($qrinput, QR_MODE_8, @*ARGS[0].chars, @*ARGS[0]);
 my $qrstruct = QRinput_Struct_new;
 QRinput_Struct_appendInput($qrstruct, $qrinput);
 my $qrlist = QRcode_encodeInputStructured($qrstruct);
@@ -18,9 +18,10 @@ while $entry {
   my @data := $qrcode.data;
   my $w := $qrcode.width;
   (@data[$_ * $w .. $_ * $w + $w - 1] »+&» 1)
+    .map({ $_ xx 2 })
+    .flat
     .join
     .trans('1' => "\c[FULL BLOCK]", '0' => ' ')
-    .subst(/(.)/, {"$0$0"}, :g)
     .say
       for ^$w;
 }
