@@ -12,3 +12,5 @@ is $qrcode.termplot.WHAT, Failure, 'failure when no data to plot';
 is $qrcode.qrcode.defined, False, 'qrcode present and undefined';
 $qrcode.encode('https://perl6.org/', :level(QR_ECLEVEL_M));
 is $qrcode.qrcode.defined, True, 'encode a string';
+
+done-testing;
