@@ -84,6 +84,7 @@ method encode(Str $text!, Int :$version, Int :$level, Int :$mode, Int :$casesens
     $mode // $!mode,
     $casesensitive // $!casesensitive
   );
+  return self;
 }
 
 method termplot(Int :$size)
