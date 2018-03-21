@@ -102,6 +102,27 @@ method termplot(Int :$size)
   return OK;
 }
 
+proto method get-data($dim?) {*}
+
+multi method get-data(1)
+{
+  my $w    := $!qrcode.width;
+  my @data := $!qrcode.data;
+  @data[^($w * $w)] »+&» 1;
+}
+
+multi method get-data(2)
+{
+  my $w    := $!qrcode.width;
+  my @data := $!qrcode.data;
+  my @array[$w;$w] = [ for ^$w { @data[$_ * $w .. $_ * $w + $w - 1] »+&» 1 } ];
+}
+
+multi method get-data($dim?)
+{
+  fail 'non implemented';
+}
+
 submethod DESTROY
 {
   QRcode_free($!qrcode) if $!qrcode.defined;
@@ -115,6 +136,10 @@ Image::QRCode - An interface to libqrencode.
 
 =head1 SYNOPSIS
 =begin code
+
+use Image::QRCode;
+
+Image::QRCode.new.encode('https://perl6.org/').termplot;
 
 =end code
 
