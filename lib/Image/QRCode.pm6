@@ -67,11 +67,11 @@ sub QRcode_clearCache() is native(LIB) is export { * }
 
 # OO interface
 
-has Int $.version       = 0;
-has Int $.level         = QR_ECLEVEL_L;
-has Int $.mode          = QR_MODE_8;
-has Int $.casesensitive = 1;
-has Int $.size          = 2;
+has Int $.version       is rw = 0;
+has Int $.level         is rw = QR_ECLEVEL_L;
+has Int $.mode          is rw = QR_MODE_8;
+has Int $.casesensitive is rw = True;
+has Int $.size          is rw = 2;
 has QRcode $.qrcode;
 
 constant OK is export(:constants) = 1;
@@ -139,11 +139,133 @@ Image::QRCode - An interface to libqrencode.
 
 use Image::QRCode;
 
+my $code = Image::QRCode.new.encode('https://perl6.org/');
+my $dim = $code.qrcode.width;
+my @array2D[$dim;$dim] = $code.get-data(2);
+say @array2D.shape;
+say @array2D;
+my @array1D = $code.get-data(1);
+say @array1D;
+
+=end code
+
+=begin code
+
+use Image::QRCode;
+
 Image::QRCode.new.encode('https://perl6.org/').termplot;
 
 =end code
 
+For more examples see the I<example> directory.
+
 =head1 DESCRIPTION
+
+Image::QRCode provides an interface to libqrencode and allows you to generate a QR Code.
+
+=head1 METHODS
+
+=head2 new(Int :$.version, Int :$.level, Int :$.mode, Int :$.casesensitive, Int :$.size)
+
+Creates an B<Image::QRCode> object. It may take a list of optional arguments.
+
+The optional argument B<$version> defaults to 0 (auto-select). The maximum version value is 4.
+
+The optional argument B<$level> defaults to QR_ECLEVEL_L. The list of possible values for this argument is
+provided by the B<QRecLevel> enum:
+
+=item QR_ECLEVEL_L  # lowest
+=item QR_ECLEVEL_M
+=item QR_ECLEVEL_Q
+=item QR_ECLEVEL_H  # highest
+
+The optional argument B<$mode> defaults to QR_MODE_8. The list of possible values for this argument is
+provided by the B<QRencodeMode> enum:
+
+=item QR_MODE_NUL        # Terminator (NUL character). Internal use only
+=item QR_MODE_NUM        # Numeric mode
+=item QR_MODE_AN         # Alphabet-numeric mode
+=item QR_MODE_8          # 8-bit data mode
+=item QR_MODE_KANJI      # Kanji (shift-jis) mode
+=item QR_MODE_STRUCTURE  # Internal use only
+=item QR_MODE_ECI        # ECI mode
+=item QR_MODE_FNC1FIRST  # FNC1, first position
+=item QR_MODE_FNC1SECOND # FNC1, second position
+
+The optional argument B<$casesensitive> defaults to True.
+
+The optional argument B<$size> defaults to 2. This argument is used only when generating a character based
+plot of the QR code to adjust the relative proportion of width vs. height.
+
+All these arguments can be accessed directly for both reading and writing:
+
+=begin code
+
+my Image::QRCode $code .= new;
+$code.casesensitive = False;
+
+=end code
+
+=head2 encode(Str $text!, Int :$version, Int :$level, Int :$mode, Int :$casesensitive)
+
+Encodes a string. It takes one I<mandatory> argument:
+B<text>, the string to encode. All the other arguments are optional.
+
+This method put a QR code in the attribute B<qrcode>, an object of class QRcode, which can be read directly or
+managed by other methods.
+
+The class B<QRcode> is an interface to the library's internal structure of a QR code. It has three attributes:
+
+=item int32 $.version
+=item int32 $.width
+=item CArray[uint8] $.data
+
+Even if the B<data> attribute can be accessed directly, its representation is a bit complex and most of the
+coded information is not very useful.
+The original library's documentation goes as follows:
+
+=begin code
+
+Symbol data is represented as an array contains width*width uchars.
+Each uchar represents a module (dot). If the less significant bit of
+the uchar is 1, the corresponding module is black. The other bits are
+meaningless for usual applications, but here its specification is described.
+
+MSB 76543210 LSB
+    |||||||`- 1=black/0=white
+    ||||||`-- data and ecc code area
+    |||||`--- format information
+    ||||`---- version information
+    |||`----- timing pattern
+    ||`------ alignment pattern
+    |`------- finder pattern and separator
+    `-------- non-data modules (format, timing, etc.)
+
+=end code
+
+=item2 get-data($dimension)
+
+This method returns the QR code data, encoded as a 1D or 2D array. The argument B<dimension> can be 1 or 2:
+passing a dimension = 1 the method returns a linear array of the values of all the dots, coded as 0 (black)
+or 1 (white).
+A value of 2 makes the method return an array of arrays.
+
+=item2 termplot(Int :$size)
+
+This method accepts the optional parameter B<size>, which determines the orizontal stretch of the "image".
+It prints the QR code on the terminal screen as C<\c[FULL BLOCK]> characters.
+It returns a Failure object if there's no data to plot.
+
+=head1 LOW LEVEL CALLS
+
+This module provides an interface to all the C library's functions.
+The library's full documentation can be found here:
+
+L<https://fukuchi.org/works/qrencode/manual/index.html>
+
+Its GitHub page is:
+
+L<https://github.com/fukuchi/libqrencode>
 
 =head1 Prerequisites
 
