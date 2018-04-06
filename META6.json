@@ -1,6 +1,6 @@
 {
   "perl" : "6.c",
-  "tags" : [ "image", "qrcode" ],
+  "tags" : [ "image", "qrcode", "nativecall" ],
   "name" : "Image::QRCode",
   "version" : "0.0.1",
   "description" : "Interface to libqrencode",
