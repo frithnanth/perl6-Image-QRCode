@@ -1,9 +1,9 @@
-use v6;
-unit class Image::QRCode:ver<0.0.1>;
+use v6.d;
+unit class Image::QRCode:ver<0.0.2>;
 
 use NativeCall;
 
-constant LIB = ('qrencode', v3);
+constant LIB = ('qrencode', v4);
 
 # Encoding mode
 enum QRencodeMode is export(:constants) «:QR_MODE_NUL(-1) QR_MODE_NUM QR_MODE_AN QR_MODE_8 QR_MODE_KANJI QR_MODE_STRUCTURE QR_MODE_ECI QR_MODE_FNC1FIRST QR_MODE_FNC1SECOND»;
