@@ -126,13 +126,20 @@ When using the low level calls, keep in mind that old versions of the library ma
 * pre 2010-01-16 versions have no QRcode_encodeDataMQR() and QRcode_encodeDataStructured() calls.
 
 ## Prerequisites
-This module requires the libqrencode3 library to be installed. Please follow
-the instructions below based on your platform:
+This module requires the libqrencode4 library to be installed.
+In case one has any API-compatible version, this module also reads the dynamically-assigned environment variable
+`PERL6_QRENCODE_LIB`. For example
+```
+PERL6_QRENCODE_LIB=libqrencode.so.3 ./program.p6
+```
+
+For the installation please follow the instructions below, based on your platform:
+
 
 ### Debian Linux
 
 ```
-sudo apt-get install libqrencode3
+sudo apt-get install libqrencode4
 ```
 
 ## Installation

@@ -1,9 +1,12 @@
 use v6;
-unit class Image::QRCode:ver<0.0.1>;
+unit class Image::QRCode:ver<0.0.2>;
 
 use NativeCall;
 
-constant LIB = ('qrencode', v3);
+sub LIB {
+  return %*ENV<PERL6_QRENCODE_LIB> if %*ENV<PERL6_QRENCODE_LIB>;
+  return 'libqrencode.so.4';
+}
 
 # Encoding mode
 enum QRencodeMode is export(:constants) «:QR_MODE_NUL(-1) QR_MODE_NUM QR_MODE_AN QR_MODE_8 QR_MODE_KANJI QR_MODE_STRUCTURE QR_MODE_ECI QR_MODE_FNC1FIRST QR_MODE_FNC1SECOND»;
@@ -27,43 +30,43 @@ class QRcode_List is repr('CStruct') is export {
   has QRcode_List $.next;
 }
 
-sub QRinput_new(--> QRinput) is native(LIB) is export { * }
-sub QRinput_new2(int32 $version, int32 $level --> QRinput) is native(LIB) is export { * }
-sub QRinput_newMQR(int32 $version, int32 $level --> QRinput) is native(LIB) is export { * }
-sub QRinput_append(QRinput $input, int32 $mode, int32 $size, Str $data --> int32) is native(LIB) is export { * }
-sub QRinput_appendECIheader(QRinput $input, uint32 $ecinum --> int32) is native(LIB) is export { * }
-sub QRinput_getVersion(QRinput $input --> int32) is native(LIB) is export { * }
-sub QRinput_setVersion(QRinput $input, int32 $version --> int32) is native(LIB) is export { * }
-sub QRinput_getErrorCorrectionLevel(QRinput $input --> int32) is native(LIB) is export { * }
-sub QRinput_setErrorCorrectionLevel(QRinput $input, int32 $level --> int32) is native(LIB) is export { * }
-sub QRinput_setVersionAndErrorCorrectionLevel(QRinput $input, int32 $version, int32 $level --> int32) is native(LIB) is export { * }
-sub QRinput_free(QRinput $input) is native(LIB) is export { * }
-sub QRinput_check(int32 $mode, int32 $size, Str $data --> int32) is native(LIB) is export { * }
-sub QRinput_Struct_new(--> QRinput_Struct) is native(LIB) is export { * }
-sub QRinput_Struct_setParity(QRinput_Struct $s, uint8 $parity) is native(LIB) is export { * }
-sub QRinput_Struct_appendInput(QRinput_Struct $s, QRinput $input --> int32) is native(LIB) is export { * }
-sub QRinput_Struct_free(QRinput_Struct $s) is native(LIB) is export { * }
-sub QRinput_splitQRinputToStruct(QRinput $input --> QRinput_Struct) is native(LIB) is export { * }
-sub QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct $s --> int32) is native(LIB) is export { * }
-sub QRinput_setFNC1First(QRinput $s --> int32) is native(LIB) is export { * }
-sub QRinput_setFNC1Second(QRinput $s, uint8 $appid --> int32) is native(LIB) is export { * }
-sub QRcode_encodeInput(QRinput $input --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeString(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeString8bit(Str $string, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeStringMQR(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeString8bitMQR(Str $string, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeData(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
-sub QRcode_encodeDataMQR(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(LIB) is export { * }
-sub QRcode_free(QRcode $qrcode) is native(LIB) is export { * }
-sub QRcode_encodeInputStructured(QRinput_Struct $s --> QRcode_List) is native(LIB) is export { * }
-sub QRcode_encodeStringStructured(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode_List) is native(LIB) is export { * }
-sub QRcode_encodeString8bitStructured(Str $string, int32 $version, int32 $level --> QRcode_List) is native(LIB) is export { * }
-sub QRcode_encodeDataStructured(int32 $size, Str $data, int32 $version, int32 $level --> QRcode_List) is native(LIB) is export { * }
-sub QRcode_List_size(QRcode_List $qrlist --> int32) is native(LIB) is export { * }
-sub QRcode_List_free(QRcode_List $qrlist --> int32) is native(LIB) is export { * }
-sub QRcode_APIVersion(int32 $major_version is rw, int32 $minor_version is rw, int32 $micro_version is rw) is native(LIB) is export { * }
-sub QRcode_APIVersionString(--> Str) is native(LIB) is export { * }
-sub QRcode_clearCache() is native(LIB) is export { * }
+sub QRinput_new(--> QRinput) is native(&LIB) is export { * }
+sub QRinput_new2(int32 $version, int32 $level --> QRinput) is native(&LIB) is export { * }
+sub QRinput_newMQR(int32 $version, int32 $level --> QRinput) is native(&LIB) is export { * }
+sub QRinput_append(QRinput $input, int32 $mode, int32 $size, Str $data --> int32) is native(&LIB) is export { * }
+sub QRinput_appendECIheader(QRinput $input, uint32 $ecinum --> int32) is native(&LIB) is export { * }
+sub QRinput_getVersion(QRinput $input --> int32) is native(&LIB) is export { * }
+sub QRinput_setVersion(QRinput $input, int32 $version --> int32) is native(&LIB) is export { * }
+sub QRinput_getErrorCorrectionLevel(QRinput $input --> int32) is native(&LIB) is export { * }
+sub QRinput_setErrorCorrectionLevel(QRinput $input, int32 $level --> int32) is native(&LIB) is export { * }
+sub QRinput_setVersionAndErrorCorrectionLevel(QRinput $input, int32 $version, int32 $level --> int32) is native(&LIB) is export { * }
+sub QRinput_free(QRinput $input) is native(&LIB) is export { * }
+sub QRinput_check(int32 $mode, int32 $size, Str $data --> int32) is native(&LIB) is export { * }
+sub QRinput_Struct_new(--> QRinput_Struct) is native(&LIB) is export { * }
+sub QRinput_Struct_setParity(QRinput_Struct $s, uint8 $parity) is native(&LIB) is export { * }
+sub QRinput_Struct_appendInput(QRinput_Struct $s, QRinput $input --> int32) is native(&LIB) is export { * }
+sub QRinput_Struct_free(QRinput_Struct $s) is native(&LIB) is export { * }
+sub QRinput_splitQRinputToStruct(QRinput $input --> QRinput_Struct) is native(&LIB) is export { * }
+sub QRinput_Struct_insertStructuredAppendHeaders(QRinput_Struct $s --> int32) is native(&LIB) is export { * }
+sub QRinput_setFNC1First(QRinput $s --> int32) is native(&LIB) is export { * }
+sub QRinput_setFNC1Second(QRinput $s, uint8 $appid --> int32) is native(&LIB) is export { * }
+sub QRcode_encodeInput(QRinput $input --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeString(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeString8bit(Str $string, int32 $version, int32 $level --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeStringMQR(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeString8bitMQR(Str $string, int32 $version, int32 $level --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeData(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(&LIB) is export { * }
+sub QRcode_encodeDataMQR(int32 $size, Str $data, int32 $version, int32 $level --> QRcode) is native(&LIB) is export { * }
+sub QRcode_free(QRcode $qrcode) is native(&LIB) is export { * }
+sub QRcode_encodeInputStructured(QRinput_Struct $s --> QRcode_List) is native(&LIB) is export { * }
+sub QRcode_encodeStringStructured(Str $string, int32 $version, int32 $level, int32 $mode, int32 $casesensitive --> QRcode_List) is native(&LIB) is export { * }
+sub QRcode_encodeString8bitStructured(Str $string, int32 $version, int32 $level --> QRcode_List) is native(&LIB) is export { * }
+sub QRcode_encodeDataStructured(int32 $size, Str $data, int32 $version, int32 $level --> QRcode_List) is native(&LIB) is export { * }
+sub QRcode_List_size(QRcode_List $qrlist --> int32) is native(&LIB) is export { * }
+sub QRcode_List_free(QRcode_List $qrlist --> int32) is native(&LIB) is export { * }
+sub QRcode_APIVersion(int32 $major_version is rw, int32 $minor_version is rw, int32 $micro_version is rw) is native(&LIB) is export { * }
+sub QRcode_APIVersionString(--> Str) is native(&LIB) is export { * }
+sub QRcode_clearCache() is native(&LIB) is export { * }
 
 # OO interface
 
@@ -277,13 +280,19 @@ When using the low level calls, keep in mind that old versions of the library ma
 
 =head1 Prerequisites
 
-This module requires the libqrencode3 library to be installed. Please follow the
-instructions below based on your platform:
+This module requires the libqrencode4 library to be installed.
+In case one has any API-compatible version, this module also reads the dynamically-assigned environment variable
+PERL6_QRENCODE_LIB. For example:
+=begin code
+PERL6_QRENCODE_LIB=libqrencode.so.3 ./program.p6
+=end code
+
+For the installation please follow the instructions below, based on your platform:
 
 =head2 Debian Linux
 
 =begin code
-sudo apt-get install libqrencode3
+sudo apt-get install libqrencode4
 =end code
 
 =head1 Installation
