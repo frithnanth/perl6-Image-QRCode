@@ -24,8 +24,8 @@ jobs:
           raku-version: ${{ matrix.raku-version }}
       - name: Install libqrencode4
         run: |
-          - sudo apt update
-          - sudo apt install libqrencode4
+          sudo apt update
+          sudo apt install libqrencode4
       - name: Install Dependencies
         run: |
           zef install --/test App::Prove6
