@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  raku:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        raku-version:
+          - 'latest'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Raku/setup-raku@v1
+        with:
+          raku-version: ${{ matrix.raku-version }}
+      - name: Install libqrencode4
+        run: |
+          - sudo apt -qq update
+          - sudo apt install libqrencode4
+      - name: Install Dependencies
+        run: |
+          zef install --/test App::Prove6
+      - name: Run Tests
+        run: prove6 -l t

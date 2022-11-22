@@ -1,0 +1,5 @@
+Revision history for Image-QRCode
+
+{{$NEXT}}
+    - Change file extensions to Raku standard
+    - Switch to zef ecosystem

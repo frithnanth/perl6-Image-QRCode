@@ -1,4 +1,4 @@
-#!/usr/bin/env perl6
+#!/usr/bin/env raku
 
 # In order to run this program you need to install Image::PNG::Inflated
 # zef install Image::PNG::Inflated
@@ -9,7 +9,7 @@ use Image::QRCode :constants;
 use Image::PNG::Inflated;
 
 my $qrcode = Image::QRCode.new;
-$qrcode.encode: 'https://perl6.org/';
+$qrcode.encode: 'https://raku.org/';
 my @data  := $qrcode.qrcode.data;
 my $width := $qrcode.qrcode.width;
 my @rows;

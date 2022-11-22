@@ -1,11 +1,11 @@
 use v6;
-unit class Image::QRCode:ver<0.0.2>;
+
+unit class Image::QRCode:ver<0.0.2>:auth<zef:FRITH>;
 
 use NativeCall;
 
 sub LIB {
-  return %*ENV<PERL6_QRENCODE_LIB> if %*ENV<PERL6_QRENCODE_LIB>;
-  return 'libqrencode.so.4';
+  return %*ENV<RAKU_QRENCODE_LIB> // 'libqrencode.so.4';
 }
 
 # Encoding mode
@@ -138,11 +138,11 @@ submethod DESTROY
 Image::QRCode - An interface to libqrencode.
 
 =head1 SYNOPSIS
-=begin code
+=begin code :lang<raku>
 
 use Image::QRCode;
 
-my $code = Image::QRCode.new.encode('https://perl6.org/');
+my $code = Image::QRCode.new.encode('https://raku.org/');
 my $dim = $code.qrcode.width;
 my @array2D[$dim;$dim] = $code.get-data(2);
 say @array2D.shape;
@@ -152,11 +152,11 @@ say @array1D;
 
 =end code
 
-=begin code
+=begin code :lang<raku>
 
 use Image::QRCode;
 
-Image::QRCode.new.encode('https://perl6.org/').termplot;
+Image::QRCode.new.encode('https://raku.org/').termplot;
 
 =end code
 
@@ -202,7 +202,7 @@ plot of the QR code to adjust the relative proportion of width vs. height.
 
 All these arguments can be accessed directly for both reading and writing:
 
-=begin code
+=begin code :lang<raku>
 
 my Image::QRCode $code .= new;
 $code.casesensitive = False;
@@ -282,9 +282,9 @@ When using the low level calls, keep in mind that old versions of the library ma
 
 This module requires the libqrencode4 library to be installed.
 In case one has any API-compatible version, this module also reads the dynamically-assigned environment variable
-PERL6_QRENCODE_LIB. For example:
+RAKU_QRENCODE_LIB. For example:
 =begin code
-PERL6_QRENCODE_LIB=libqrencode.so.3 ./program.p6
+RAKU_QRENCODE_LIB=libqrencode.so.3 ./program.raku
 =end code
 
 For the installation please follow the instructions below, based on your platform:
@@ -306,7 +306,7 @@ $ zef install Image::QRCode
 To run the tests:
 
 =begin code
-$ prove -e "perl6 -Ilib"
+$ prove -e "raku -Ilib"
 =end code
 
 =head1 Author
