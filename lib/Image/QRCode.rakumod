@@ -1,6 +1,6 @@
 use v6;
 
-unit class Image::QRCode:ver<0.0.2>:auth<zef:FRITH>;
+unit class Image::QRCode:ver<0.0.3>:auth<zef:FRITH>;
 
 use NativeCall;
 
