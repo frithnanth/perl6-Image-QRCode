@@ -24,7 +24,7 @@ jobs:
           raku-version: ${{ matrix.raku-version }}
       - name: Install libqrencode4
         run: |
-          - sudo apt -qq update
+          - sudo apt update
           - sudo apt install libqrencode4
       - name: Install Dependencies
         run: |
