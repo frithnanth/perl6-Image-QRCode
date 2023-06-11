@@ -11,7 +11,7 @@ is $qrcode.level, QR_ECLEVEL_L, 'qrcode level';
 is $qrcode.termplot.WHAT, Failure, 'failure when no data to plot';
 is $qrcode.casesensitive, False, 'case sensitive: false';
 is $qrcode.qrcode.defined, False, 'qrcode present and undefined';
-$qrcode.encode('https://perl6.org/', :level(QR_ECLEVEL_M));
+$qrcode.encode('https://raku.org/', :level(QR_ECLEVEL_M));
 is $qrcode.qrcode.defined, True, 'encode a string';
 my @array1D = $qrcode.get-data(1);
 my $w := $qrcode.qrcode.width;
